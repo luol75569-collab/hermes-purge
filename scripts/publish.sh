@@ -27,6 +27,10 @@ DRY=0
 
 TAG="v$(sed -n 's/^version *= *"\([^"]*\)".*/\1/p' pyproject.toml)"
 [ -n "$TAG" ] || { echo "读不到 pyproject.toml 里的 version" >&2; exit 2; }
+# Push whatever the checkout is on: the docs' raw URLs spell the branch out, so a
+# renamed branch must be pushed under its own name rather than a hardcoded one.
+BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+[ "$BRANCH" != "HEAD" ] || { echo "当前是游离 HEAD，请先切到分支" >&2; exit 2; }
 DESCRIPTION="Hermes armor plugin: sealed prompt injection, host-copy rewrites, refusal continuation, reversible config (community port of dsh-purge's approach)"
 TOKEN="${GITHUB_TOKEN:-${GH_TOKEN:-}}"
 run() { if [ "$DRY" = 1 ]; then echo "[dry-run] $*"; else "$@"; fi; }
@@ -109,8 +113,8 @@ else
   run git remote add origin "https://github.com/${REPO}.git"
 fi
 
-echo "→ 推送 master"
-push_with_auth push -u origin master
+echo "→ 推送 $BRANCH"
+push_with_auth push -u origin "$BRANCH"
 
 if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
   echo "→ 标签 $TAG 已存在"
