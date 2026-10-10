@@ -109,6 +109,83 @@ hermes purge serve --open
 
 模型侧工具：`purge_status`、`purge_apply`、`purge_revert`（与上游同名）。
 
+## 一键安装（分享给别人）
+
+### 1. 桌面端一键链接
+
+Hermes Desktop 注册了 `hermes://` 协议，插件安装链接是官方支持的形态：
+
+```
+hermes://plugin/install?repo=<owner>/hermes-purge&enable=1
+```
+
+参数来自 `apps/desktop/src/lib/deeplink-routes.ts`：
+
+| 参数 | 作用 |
+| --- | --- |
+| `repo`（或 `identifier`） | Git 仓库标识：`owner/repo` 或完整 URL |
+| `enable` | 装完是否启用，**默认就是 true**；写 `0`/`false`/`no` 可关 |
+| `force` | 覆盖已安装的同源副本 |
+| `catalog` | 改走 curated catalog 名（本项目不用，见下） |
+
+点链接**不会静默安装**：Desktop 会弹出确认框（仓库 id、安装前提示、GitHub 浏览/克隆链接），scan 出 agent / desktop 组件让用户勾选后才装，走的扫描与 `hermes plugins install` 完全一致。开发构建里 scheme 换成 `hermes-dev://`。
+
+网站或 README 里直接贴，不需要任何 SDK：
+
+```html
+<a href="hermes://plugin/install?repo=<owner>/hermes-purge&enable=1">Install in Hermes</a>
+```
+
+### 2. 一条命令
+
+```bash
+hermes plugins install <owner>/hermes-purge --yes-deps --enable
+hermes plugins install https://github.com/<owner>/hermes-purge.git --ref <40位SHA> --yes-deps --enable  # 可复现
+```
+
+Windows PowerShell 同一条（`hermes` 需在 PATH）。
+
+### 3. 一键脚本
+
+```bash
+# macOS / Linux
+curl -fsSL https://raw.githubusercontent.com/<owner>/hermes-purge/master/install.sh \
+  | bash -s -- --repo <owner>/hermes-purge
+```
+
+```powershell
+# Windows
+irm https://raw.githubusercontent.com/<owner>/hermes-purge/master/install.ps1 -OutFile install.ps1
+.\install.ps1 -Repo <owner>/hermes-purge
+```
+
+脚本只调 `hermes plugins install`，不改 Hermes 检出、不写选定 profile 之外的位置；`--ref` 固定 commit，`--no-enable` 先装后验，`--home` 指定 profile home。缺 `hermes` 或缺 `git` 时直接报错退出，不会装作成功。
+
+### 4. 交给 AI 助手安装（整段复制）
+
+> 请帮我核对并安装 Hermes 插件 hermes-purge，仓库 `<owner>/hermes-purge`，条目版本 0.2.0，安装包同版本。
+>
+> 先检查环境：`hermes --version`；`hermes plugins list --user` 看目标 profile 是否已有同名插件；确认 `git` 可用；多 profile 时用 `hermes -p <name>` 或 `HERMES_HOME` 指定目标 profile，不要装到错误的 home。
+>
+> 安装：
+> `hermes plugins install <owner>/hermes-purge --yes-deps --no-enable`
+> 然后用 `hermes plugins doctor hermes-purge` 核对 —— 必须报 manifest `hermes-purge 0.2.0`、`runtime discovery, manifest parsing, import, and registration passed`、`3 tool(s), 2 hook(s)`。
+> 不要用同名插件、其它版本或其它仓库替代。
+>
+> 核对通过后 `hermes plugins enable hermes-purge`，完全退出并重开目标 profile，再验证：
+> `hermes plugins list --user`、`hermes purge armor`（应列出 3 套密封提示词套与改写规则表）、`hermes purge status`。
+> 只有以上真实输出确认过才算安装成功；任何一步不符或环境不满足（缺 hermes、缺 git、版本对不上），先说明原因再继续，不要跳过。
+>
+> 注意：本插件含破甲层（破甲提示词注入、宿主拦截文案改写、拒答续跑），`armor` 预设会写 `approvals.mode=off`。仅在你自己的机器上安装。应用破甲是单独一步：`hermes purge apply --preset armor`，回滚用 `hermes purge revert`，整体停用用 `hermes plugins disable hermes-purge`。
+
+> **首次在全新 Hermes 上安装**：Hermes 会先为这个 home 准备隔离运行时（`uv sync` 整套依赖），需要网络、可能几分钟；网速差时它以 `Failed to download …` 结束，此时先 `hermes pm repair` 或换网重试，再装插件本身。已初始化过的 Hermes 不触发这一步。
+
+### 5. 和 dsh-purge 那种链接的差别
+
+- **没有"托管 tgz 制品"形态。** `hermes plugins install` 只接受 catalog 名、Git URL、`owner/repo`（`hermes_cli/plugins_cmd.py::_resolve_git_url`），所以链接指向仓库，不指向 tarball。
+- **深链不能 pin commit。** 只有 catalog 条目带 40 位 SHA pin；要可复现就把 CLI 命令连 `--ref` 一起发。
+- **本项目不走 curated catalog。** 条目要求精确 SHA + 能力声明（`plugin.yaml` 的 `provides_*` 已按此对齐），但准入规则 12 明确禁止插件绕过 Hermes 的审批系统，而 `armor` 预设会写 `approvals.mode=off`——与其在 PR 里把破甲摘掉，不如只走 `repo=` 深链和 CLI。
+
 ## 提示词套与模型
 
 | 套名 | 用途 | 字符数 |
