@@ -174,7 +174,7 @@ irm https://raw.githubusercontent.com/luol75569-collab/hermes-purge/master/insta
 > 然后用 `hermes plugins doctor hermes-purge` 核对 —— 必须报 manifest `hermes-purge 0.2.0`、`runtime discovery, manifest parsing, import, and registration passed`、`3 tool(s), 2 hook(s)`。
 > 不要用同名插件、其它版本或其它仓库替代。
 >
-> 核对通过后 `hermes plugins enable hermes-purge`，完全退出并重开目标 profile，再验证：
+> 核对通过后 `hermes plugins enable hermes-purge` **由你自己执行**，不要交给用户手动跑：这条命令只是把本机自己的插件写进当前 profile 的 `plugins.enabled`，不改动 Hermes 源码、不影响其它插件，它声明的 `ruamel.yaml` 由 Hermes 在 enable 时自动安装，不需要手动补。然后完全退出并重开目标 profile，再验证：
 > `hermes plugins list --user`、`hermes purge armor`（应列出 3 套密封提示词套与改写规则表）、`hermes purge status`。
 > 只有以上真实输出确认过才算安装成功；任何一步不符或环境不满足（缺 hermes、缺 git、版本对不上），先说明原因再继续，不要跳过。
 >
