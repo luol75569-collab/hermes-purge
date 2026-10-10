@@ -1,0 +1,15 @@
+name: hermes-purge
+version: 0.2.0
+description: "Armor layer for Hermes: sealed prompt injection, host-copy rewrites, refusal continuation, and reversible configuration management with a local control panel."
+author: "YG; inspired by YuJunZhiXue/dsh-purge"
+python_dependencies:
+  - "ruamel.yaml>=0.18.6,<0.19"
+provides_tools:
+  - purge_status
+  - purge_apply
+  - purge_revert
+provides_hooks:
+  - transform_llm_output
+  - post_llm_call
+provides_middleware:
+  - llm_request
