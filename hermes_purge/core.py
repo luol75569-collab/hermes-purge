@@ -6,6 +6,7 @@ import hashlib
 import io
 import json
 import os
+import sys
 import tempfile
 import uuid
 from collections.abc import Mapping
@@ -49,13 +50,28 @@ def digest(data: bytes | None) -> str | None:
     return hashlib.sha256(data).hexdigest() if data is not None else None
 
 
+def platform_default_home() -> Path:
+    """Fallback home when Hermes is not importable, mirroring Hermes' own platform default.
+
+    ``hermes_constants._get_platform_default_hermes_home`` resolves Windows to
+    ``%LOCALAPPDATA%\\hermes`` and POSIX to ``~/.hermes``; a plugin run outside the Hermes
+    interpreter (``hermes-purge`` standalone, a panel launched by hand) must not pick a
+    different directory than the host it will configure.
+    """
+    if sys.platform == "win32":
+        base = os.environ.get("LOCALAPPDATA", "").strip()
+        return (Path(base) if base else Path.home() / "AppData" / "Local") / "hermes"
+    return Path.home() / ".hermes"
+
+
 def resolve_home(explicit=None) -> Path:
     if explicit is not None:
         return Path(explicit).expanduser().resolve()
     try:
         from hermes_constants import get_hermes_home
     except ImportError:
-        return Path(os.environ.get("HERMES_HOME") or Path.home() / ".hermes").expanduser().resolve()
+        configured = os.environ.get("HERMES_HOME", "").strip()
+        return (Path(configured) if configured else platform_default_home()).expanduser().resolve()
     return Path(get_hermes_home()).resolve()
 
 

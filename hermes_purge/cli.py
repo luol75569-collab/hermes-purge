@@ -4,9 +4,28 @@ from __future__ import annotations
 import argparse
 import json
 import shutil
+import sys
 from pathlib import Path
 from . import armor, scrub
 from .core import DEFAULT_PRESET, Manager, PRESETS, PurgeError
+
+
+def force_utf8_streams():
+    """Arm stdout/stderr before printing CJK.
+
+    Windows consoles default to a legacy code page (cp936/cp1252), so a JSON status dump
+    carrying 中文 raises ``UnicodeEncodeError`` and the command dies after it already
+    changed files.  ``reconfigure`` is the in-place fix; replace the offending character
+    instead of aborting when even UTF-8 cannot carry it.
+    """
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if not callable(reconfigure):
+            continue
+        try:
+            reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
 
 
 def setup_parser(parser):
@@ -96,6 +115,9 @@ def execute(args):
 
 
 def handle_namespace(args):
+    # Both entry points land here: the standalone `hermes-purge` script and Hermes'
+    # native `hermes purge ...`, whose output also goes through this print.
+    force_utf8_streams()
     try:
         print(json.dumps(execute(args), indent=2, ensure_ascii=False))
         return 0

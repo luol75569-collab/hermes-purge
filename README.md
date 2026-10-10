@@ -58,7 +58,33 @@ Windows 将 `.venv/bin/python` 换成 `.venv\Scripts\python.exe`，先用 `py -3
 
 安装只复制本插件，不会自动应用配置。插件目录已存在时保留原文件并报错。面板地址带一次性随机令牌，仅监听 `127.0.0.1`；`Ctrl+C` 关闭。
 
-### C. 发布前自检
+### C. Windows
+
+Windows 上和 macOS/Linux 的差别只有三处，都不需要单独分支：
+
+Hermes 的 Windows 默认 home 是 **`%LOCALAPPDATA%\hermes`**（源码 `hermes_constants._get_platform_default_hermes_home`），不是 `~/.hermes`；设了 `HERMES_HOME` 时以环境变量为准。所以 `--home` 要写对：
+
+```powershell
+# 前置：Git for Windows（hermes plugins install 走 git clone ）、Node ≥18、Python 3.11+
+py -3.11 -m venv .venv
+.venv\Scripts\python.exe -m pip install .
+
+# 发布后（推荐）
+hermes plugins install <owner>/<repo> --yes-deps --enable
+
+# 或从本地目录
+.venv\Scripts\python.exe -m hermes_purge --home "$env:LOCALAPPDATA\hermes" install
+hermes plugins enable hermes-purge
+hermes purge armor
+```
+
+`--yes-deps` 在 Windows 上同样有用：`hermes plugins enable` 会提示安装声明里的 `ruamel.yaml`，非交互场景需要它替你应答（本机实测该步会自动装上依赖并输出 “Installing Python dependencies… ✓”）。
+
+中文输出：本插件的 CLI 在打印前会把 stdout/stderr 切到 UTF-8（`cli.force_utf8_streams`），所以 `hermes purge armor` 里的中文标签不会在 cp936 控制台上抛 `UnicodeEncodeError`。终端若仍显示乱码，用 Windows Terminal 或 `chcp 65001`。面板同样可用：`hermes-purge serve --open`，只监听 `127.0.0.1`。
+
+这一节基于源码与平台单测（Windows 的 home 解析分支、ASCII-only 控制台输出），**未在 Windows 实机跑过**；备份目录的 `0700`/`0600` 权限在 Windows 上按该系统语义降级。macOS/Linux 侧则是完整实机验证：`hermes plugins install → list → enable → doctor → hermes purge apply --preset armor → 会话提示词段渲染 → remove`。
+
+### D. 发布前自检
 
 用 Hermes 自己的准入校验器过一遍（本版本结果：14 项全 PASS，安全扫描 verdict `safe`，零警告）：
 

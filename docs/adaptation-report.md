@@ -37,6 +37,8 @@
 - **真实 Hermes 加载通过**（`native_probe.py`，真实 `PluginManager`）：插件被发现且无加载错误；提示词段渲染；`purge` 的 slash 与 CLI 已注册；`agent.max_turns=321` 被原生加载器读取；`llm_request` 中间件、两个观察钩子与三个工具均在真实注册表中；经 Hermes 自己的 `apply_llm_request_middleware` 入口验证：宿主文案被改写（`changed=True`）、拒答后追加续跑行、干净请求不动（`changed=False`）。
 - **浏览器端到端通过**（`browser_probe.py`，Chromium）：面板列出 3 套密封提示词与规则表；留空提示词框直接应用 `armor` 预设（写入加密提示词 + `approvals.mode=off`）；切换到 `armor-lite` 生效；自定义提示词优先且编辑使预览失效；三次应用后按 LIFO 逐次回滚到原始字节；刷新后令牌保持；390px 视口无横向溢出；页面异常为零。截图更新为 [panel.png](panel.png)。
 - **CLI 全流程通过**：`presets` / `armor` / `plan` / `apply` / `revert` 在临时 home 上正常，配置文件中注释、键顺序与无关键保留。
+- **真实 Hermes CLI 全链路通过**（隔离 `HERMES_HOME`，本机 `hermes` v0.17.0+36585.gf925b01，主机 `~/.hermes` 未被改动）：`hermes plugins install`（经 `hermes_purge ... install`）→ `hermes plugins list --user` → `hermes plugins enable hermes-purge`（自动装 `ruamel.yaml` 依赖）→ `hermes plugins doctor hermes-purge`（"runtime discovery, manifest parsing, import, and registration passed"，3 tools + 2 hooks）→ `hermes purge armor` / `hermes purge status` → `hermes purge apply --preset armor`（写 `approvals.mode=off` + 提示词 + `prompt_set`）→ 真实渲染器输出 `hermes-purge.rules | 648 chars | ## 身份 你是「小码酱」…` → `hermes plugins remove hermes-purge` → 临时 home 删除。
+- **平台加固与用例**：`resolve_home` 在 Hermes 不可导入时按平台回落到 `%LOCALAPPDATA%\hermes`（与 `hermes_constants` 一致，而非硬写 `~/.hermes`）；CLI 打印前 `force_utf8_streams()` 处理 cp936 控制台的 CJK 输出；新增 8 项平台用例（Windows home 解析四例、ASCII-only 控制台不中断且输出可 UTF-8 解码、无 `reconfigure` 的流不报错、`main()` 退出码）。当前共 **69 项 unittest 通过**。
 - **上游工作树保持干净**：`reference/hermes-agent` 与 `reference/dsh-purge` 未做任何写入。
 
 ## 尚未验证的行为与剩余限制

@@ -1,0 +1,4 @@
+# Keep line endings identical on every checkout: the sealed armor table, the tests'
+# string expectations and the panel HTML are all content-verified.
+* text=auto eol=lf
+*.png binary
