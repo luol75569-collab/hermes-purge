@@ -1,7 +1,7 @@
 # hermes-purge one-command installer (Windows PowerShell 5.1+ / PowerShell 7+).
 #
-#   irm https://raw.githubusercontent.com/<owner>/hermes-purge/master/install.ps1 -OutFile install.ps1
-#   .\install.ps1 -Repo <owner>/hermes-purge
+#   irm https://raw.githubusercontent.com/luol75569-collab/hermes-purge/master/install.ps1 -OutFile install.ps1
+#   .\install.ps1 -Repo luol75569-collab/hermes-purge
 #
 # The script only drives Hermes' own `hermes plugins install`; it never patches the
 # Hermes checkout and never writes outside the selected profile home.
@@ -17,7 +17,7 @@ param(
 $ErrorActionPreference = 'Stop'
 
 $usage = @'
-用法: install.ps1 [-Repo <owner>/hermes-purge] [-Ref <40位commit SHA>] [-HomePath <HERMES_HOME>]
+用法: install.ps1 [-Repo luol75569-collab/hermes-purge] [-Ref <40位commit SHA>] [-HomePath <HERMES_HOME>]
                   [-NoEnable] [-Force]
 
   -Repo GitHub 仓库或完整 Git URL；在仓库目录内运行时可自动从 origin 推断
@@ -39,7 +39,7 @@ if (-not $Repo) {
 }
 if (-not $Repo) {
     Write-Host $usage
-    throw "缺少仓库地址：加 -Repo <owner>/hermes-purge，或设置环境变量 HERMES_PURGE_REPO"
+    throw "缺少仓库地址：加 -Repo luol75569-collab/hermes-purge，或设置环境变量 HERMES_PURGE_REPO"
 }
 
 if (-not (Get-Command hermes -ErrorAction SilentlyContinue)) {

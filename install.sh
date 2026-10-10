@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # hermes-purge one-command installer (macOS / Linux).
 #
-#   bash install.sh --repo <owner>/hermes-purge
-#   curl -fsSLo install.sh https://raw.githubusercontent.com/<owner>/hermes-purge/master/install.sh
-#   bash install.sh --repo <owner>/hermes-purge
+#   bash install.sh --repo luol75569-collab/hermes-purge
+#   curl -fsSLo install.sh https://raw.githubusercontent.com/luol75569-collab/hermes-purge/master/install.sh
+#   bash install.sh --repo luol75569-collab/hermes-purge
 #
 # The script only drives Hermes' own `hermes plugins install`; it never patches the
 # Hermes checkout and never writes outside the selected profile home.
@@ -17,7 +17,7 @@ FORCE=0
 
 usage() {
   cat <<'EOF'
-用法: install.sh [--repo <owner>/hermes-purge] [--ref <40位commit SHA>] [--home <HERMES_HOME>]
+用法: install.sh [--repo luol75569-collab/hermes-purge] [--ref <40位commit SHA>] [--home <HERMES_HOME>]
                  [--no-enable] [--force]
 
   --repo      GitHub 仓库或完整 Git URL；在仓库目录内运行时可自动从 origin 推断
@@ -45,7 +45,7 @@ if [ -z "$REPO" ]; then
   REPO="$(git -C "$here" remote get-url origin 2>/dev/null || true)"
 fi
 if [ -z "$REPO" ]; then
-  echo "缺少仓库地址：加 --repo <owner>/hermes-purge，或设置 HERMES_PURGE_REPO" >&2
+  echo "缺少仓库地址：加 --repo luol75569-collab/hermes-purge，或设置 HERMES_PURGE_REPO" >&2
   exit 2
 fi
 

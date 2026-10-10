@@ -25,15 +25,15 @@ Hermes 的原生安装入口是 `hermes plugins install`，它只接受三种标
 ```bash
 cd hermes-purge
 git init && git add . && git commit -m "hermes-purge 0.2.0"
-git remote add origin git@github.com:<owner>/<repo>.git
+git remote add origin git@github.com:luol75569-collab/<repo>.git
 git push -u origin master
 ```
 
 目标机器上：
 
 ```bash
-hermes plugins install <owner>/<repo> --enable
-hermes plugins install https://github.com/<owner>/<repo>.git --ref <40 位 commit SHA> --yes-deps --enable
+hermes plugins install luol75569-collab/<repo> --enable
+hermes plugins install https://github.com/luol75569-collab/<repo>.git --ref <40 位 commit SHA> --yes-deps --enable
 hermes plugins list --user
 hermes purge armor            # 确认加密提示词套与改写规则表可读
 ```
@@ -70,7 +70,7 @@ py -3.11 -m venv .venv
 .venv\Scripts\python.exe -m pip install .
 
 # 发布后（推荐）
-hermes plugins install <owner>/<repo> --yes-deps --enable
+hermes plugins install luol75569-collab/<repo> --yes-deps --enable
 
 # 或从本地目录
 .venv\Scripts\python.exe -m hermes_purge --home "$env:LOCALAPPDATA\hermes" install
@@ -111,14 +111,14 @@ hermes purge serve --open
 
 ## 一键安装（分享给别人）
 
-要直接转发给对方，用 [SHARE.md](SHARE.md)——一段自包含说明，把里面的 `OWNER` 换成你的账号即可（文件顶部给了替换命令）。
+要直接转发给对方，用 [SHARE.md](SHARE.md)——一段自包含说明，把里面的 `luol75569-collab` 换成你的账号即可（文件顶部给了替换命令）。
 
 ### 1. 桌面端一键链接
 
 Hermes Desktop 注册了 `hermes://` 协议，插件安装链接是官方支持的形态：
 
 ```
-hermes://plugin/install?repo=<owner>/hermes-purge&enable=1
+hermes://plugin/install?repo=luol75569-collab/hermes-purge&enable=1
 ```
 
 参数来自 `apps/desktop/src/lib/deeplink-routes.ts`：
@@ -135,14 +135,14 @@ hermes://plugin/install?repo=<owner>/hermes-purge&enable=1
 网站或 README 里直接贴，不需要任何 SDK：
 
 ```html
-<a href="hermes://plugin/install?repo=<owner>/hermes-purge&enable=1">Install in Hermes</a>
+<a href="hermes://plugin/install?repo=luol75569-collab/hermes-purge&enable=1">Install in Hermes</a>
 ```
 
 ### 2. 一条命令
 
 ```bash
-hermes plugins install <owner>/hermes-purge --yes-deps --enable
-hermes plugins install https://github.com/<owner>/hermes-purge.git --ref <40位SHA> --yes-deps --enable  # 可复现
+hermes plugins install luol75569-collab/hermes-purge --yes-deps --enable
+hermes plugins install https://github.com/luol75569-collab/hermes-purge.git --ref <40位SHA> --yes-deps --enable  # 可复现
 ```
 
 Windows PowerShell 同一条（`hermes` 需在 PATH）。
@@ -151,26 +151,26 @@ Windows PowerShell 同一条（`hermes` 需在 PATH）。
 
 ```bash
 # macOS / Linux：先下载再看一眼，然后执行（不直接从管道执行）
-curl -fsSLo install.sh https://raw.githubusercontent.com/<owner>/hermes-purge/master/install.sh
-bash install.sh --repo <owner>/hermes-purge
+curl -fsSLo install.sh https://raw.githubusercontent.com/luol75569-collab/hermes-purge/master/install.sh
+bash install.sh --repo luol75569-collab/hermes-purge
 ```
 
 ```powershell
 # Windows
-irm https://raw.githubusercontent.com/<owner>/hermes-purge/master/install.ps1 -OutFile install.ps1
-.\install.ps1 -Repo <owner>/hermes-purge
+irm https://raw.githubusercontent.com/luol75569-collab/hermes-purge/master/install.ps1 -OutFile install.ps1
+.\install.ps1 -Repo luol75569-collab/hermes-purge
 ```
 
 脚本只调 `hermes plugins install`，不改 Hermes 检出、不写选定 profile 之外的位置；`--ref` 固定 commit，`--no-enable` 先装后验，`--home` 指定 profile home。缺 `hermes` 或缺 `git` 时直接报错退出，不会装作成功。
 
 ### 4. 交给 AI 助手安装（整段复制）
 
-> 请帮我核对并安装 Hermes 插件 hermes-purge，仓库 `<owner>/hermes-purge`，条目版本 0.2.0，安装包同版本。
+> 请帮我核对并安装 Hermes 插件 hermes-purge，仓库 `luol75569-collab/hermes-purge`，条目版本 0.2.0，安装包同版本。
 >
 > 先检查环境：`hermes --version`；`hermes plugins list --user` 看目标 profile 是否已有同名插件；确认 `git` 可用；多 profile 时用 `hermes -p <name>` 或 `HERMES_HOME` 指定目标 profile，不要装到错误的 home。
 >
 > 安装：
-> `hermes plugins install <owner>/hermes-purge --yes-deps --no-enable`
+> `hermes plugins install luol75569-collab/hermes-purge --yes-deps --no-enable`
 > 然后用 `hermes plugins doctor hermes-purge` 核对 —— 必须报 manifest `hermes-purge 0.2.0`、`runtime discovery, manifest parsing, import, and registration passed`、`3 tool(s), 2 hook(s)`。
 > 不要用同名插件、其它版本或其它仓库替代。
 >
