@@ -111,6 +111,8 @@ hermes purge serve --open
 
 ## 一键安装（分享给别人）
 
+要直接转发给对方，用 [SHARE.md](SHARE.md)——一段自包含说明，把里面的 `OWNER` 换成你的账号即可（文件顶部给了替换命令）。
+
 ### 1. 桌面端一键链接
 
 Hermes Desktop 注册了 `hermes://` 协议，插件安装链接是官方支持的形态：
