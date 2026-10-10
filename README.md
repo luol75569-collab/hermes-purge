@@ -150,9 +150,9 @@ Windows PowerShell 同一条（`hermes` 需在 PATH）。
 ### 3. 一键脚本
 
 ```bash
-# macOS / Linux
-curl -fsSL https://raw.githubusercontent.com/<owner>/hermes-purge/master/install.sh \
-  | bash -s -- --repo <owner>/hermes-purge
+# macOS / Linux：先下载再看一眼，然后执行（不直接从管道执行）
+curl -fsSLo install.sh https://raw.githubusercontent.com/<owner>/hermes-purge/master/install.sh
+bash install.sh --repo <owner>/hermes-purge
 ```
 
 ```powershell

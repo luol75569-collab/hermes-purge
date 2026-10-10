@@ -2,8 +2,8 @@
 # hermes-purge one-command installer (macOS / Linux).
 #
 #   bash install.sh --repo <owner>/hermes-purge
-#   curl -fsSL https://raw.githubusercontent.com/<owner>/hermes-purge/master/install.sh \
-#     | bash -s -- --repo <owner>/hermes-purge
+#   curl -fsSLo install.sh https://raw.githubusercontent.com/<owner>/hermes-purge/master/install.sh
+#   bash install.sh --repo <owner>/hermes-purge
 #
 # The script only drives Hermes' own `hermes plugins install`; it never patches the
 # Hermes checkout and never writes outside the selected profile home.

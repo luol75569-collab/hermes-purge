@@ -33,7 +33,8 @@ irm https://raw.githubusercontent.com/OWNER/hermes-purge/master/install.ps1 -Out
 macOS / Linux：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/OWNER/hermes-purge/master/install.sh | bash -s -- --repo OWNER/hermes-purge
+curl -fsSLo install.sh https://raw.githubusercontent.com/OWNER/hermes-purge/master/install.sh
+bash install.sh --repo OWNER/hermes-purge
 ```
 
 ## 方式 4：整段复制给对方的 AI 助手
